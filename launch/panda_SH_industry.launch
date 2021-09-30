@@ -4,8 +4,9 @@
 	<!-- ARGS -->
 	<arg name="ns_setup" default="setup2"/>
 	<arg name="ip" default="172.16.0.102"/>
+	<arg name="ip_SH" default="1"/>
 
-	<arg name="load_gripper_" default="true" doc="Franka default gripper loader"/>
+	<arg name="load_gripper_" default="false" doc="Franka default gripper loader"/>
 	<arg name="use_rviz" default="true" doc="Choose whether or not to use rviz."/>
 	<!-- <arg name="first_controller" default="cartesian_impedance_modified" doc="Right franka controller name"/> -->
 	<arg name="first_controller" default="cartesian_impedance_controller_softbots_stiff_matrix" doc=" franka controller name"/>
@@ -32,12 +33,13 @@
 		<node name="controller_spawner_stopped" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped $(arg second_controller) $(arg third_controller)"/>
 
 
+		<!-- <node pkg="softhand_industry" type="SH_industry_node" name="SH_industry_node" output="screen" /> -->
 
 
 
 		<!-- RPWC-PANDA BRIDGE -->
     	<node pkg="rpwc_bridge" name="franka_bridge" type="franka_bridge_node" output="screen"/>
-		<node pkg="rpwc_bridge" name="franka_gripper_bridge" type="franka_gripper_bridge_node" output="screen"/>
+    	<node pkg="rpwc_bridge" name="softhand_industry_bridge" type="softhand_industry_bridge_node" output="screen"/>
     	
 
 

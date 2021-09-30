@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<launch>
+
+	<!-- ARGS -->
+	<arg name="ns_setup" default="setup1"/>
+	<arg name="ip" default="192.168.131.200"/>
+	<!-- <arg name="load_gripper_" default="false" doc="Franka default gripper loader"/> -->
+	<!-- <arg name="use_rviz" default="true" doc="Choose whether or not to use rviz."/> -->
+	<!-- <arg name="controller_RIGHT" default="cartesian_impedance_modified" doc="Right franka controller name"/> -->
+	<!-- <arg name="first_controller" default="joint_position_one_task_inv_kin" doc=" franka controller name"/> -->
+	<!-- <arg name="second_controller" default="cartesian_impedance_controller_softbots_stiff_matrix" doc=" franka controller name"/> -->
+<!-- 	<arg name="second_controller" default="cartesian_impedance_modified" doc=" franka controller name"/>
+	<arg name="third_controller" default="gravity_comp" doc=" franka controller name"/> -->
+	<!-- <param name="foo" value="$(arg robot_ip)" /> -->
+
+	<group ns="$(arg ns_setup)">
+
+		<!-- <param name="robot_description" textfile="$(find gofa_description)/urdf/gofa.urdf" /> -->
+		<param name="robot_description" command="$(find xacro)/xacro $(find calibration)/robots/gofa_arm_SH_industry_calibration.urdf.xacro" />
+		<param name="ip_robot" 	 value="$(arg ip)" />
+    	<param name="name_robot" value="ROB_1" />
+    	<param name="task_robot" value="T_ROB1" />
+    	<param name="pos_corr_gain" value="1" />
+    	<param name="max_speed_deviation" value="300" />
+    	<param name="port_robot" value="443" />
+  		<param name="robot_port_number" value="6511" />
+  		<param name="root_name" value="base" />
+  		<param name="tip_name" value="tool0" />
+
+	    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+	    <node pkg="abb_driver" name="abb_interface" type="abb_interface_node" output="screen"/>
+  		<node pkg="abb_driver" name="controller_bridge" type="controller_bridge_node" output="screen"/>
+  		<!-- <node pkg="abb_controllers" name="OneTaskInvKin" type="OneTaskInvKin_node" output="screen"/> -->
+
+
+		<!-- RPWC-ABB BRIDGE -->
+    	<!-- <node pkg="rpwc_bridge" name="abb_bridge" type="abb_bridge_node" output="screen"/> -->
+
+	</group>
+
+</launch>
