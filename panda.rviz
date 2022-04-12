@@ -59,24 +59,28 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        camera_aligned_depth_to_color_frame:
-          Value: true
-        camera_color_frame:
-          Value: true
-        camera_color_optical_frame:
-          Value: true
-        camera_depth_frame:
-          Value: true
-        camera_depth_optical_frame:
-          Value: true
-        camera_link:
-          Value: true
         panda_EE:
           Value: true
         panda_K:
           Value: false
         panda_link8:
           Value: false
+        setup1/L1:
+          Value: true
+        setup1/L2:
+          Value: true
+        setup1/L3:
+          Value: true
+        setup1/L4:
+          Value: true
+        setup1/L5:
+          Value: true
+        setup1/L6:
+          Value: true
+        setup1/base:
+          Value: true
+        setup1/tool0:
+          Value: true
         setup2/panda_link0:
           Value: true
         setup2/panda_link1:
@@ -92,7 +96,7 @@ Visualization Manager:
         setup2/panda_link6:
           Value: true
         setup2/panda_link7:
-          Value: true
+          Value: false
         setup2/panda_link8:
           Value: true
       Marker Scale: 0.6000000238418579
@@ -291,25 +295,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.8415871858596802
+      Distance: 0.9718643426895142
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.3087204694747925
-        Y: -0.1682884842157364
-        Z: -0.015430977568030357
+        X: 0.13506445288658142
+        Y: -0.12139160186052322
+        Z: 0.38315412402153015
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.26020318269729614
+      Pitch: 0.39020347595214844
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.115422248840332
+      Yaw: 0.1604224294424057
     Saved: ~
 Window Geometry:
   Camera:
@@ -332,4 +336,4 @@ Window Geometry:
     collapsed: false
   Width: 1389
   X: 531
-  Y: 59
+  Y: 29

@@ -33,7 +33,7 @@
 		<node name="controller_spawner_stopped" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="--stopped $(arg second_controller) $(arg third_controller)"/>
 
 
-		<!-- <node pkg="softhand_industry" type="SH_industry_node" name="SH_industry_node" output="screen" /> -->
+		<node pkg="softhand_industry" type="SH_industry_node" name="SH_industry_node" output="screen" />
 
 
 

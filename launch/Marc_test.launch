@@ -14,9 +14,14 @@
 	<arg name="third_controller" default="gravity_comp" doc=" franka controller name"/> -->
 	<!-- <param name="foo" value="$(arg robot_ip)" /> -->
 
+
+	<!-- CAMERA -->
+	<node name="zivid_camera" pkg="zivid_camera" type="zivid_camera_node" ns="zivid_camera" output="screen"/>
+
+
 	<group ns="$(arg ns_setup)">
-		<param name="tf_prefix" value="$(arg ns_setup)"></param>
-		<param name="robot_description" textfile="$(find gofa_description)/urdf/gofa.urdf" />
+		<!-- <param name="tf_prefix" value="$(arg ns_setup)"></param> -->
+		<param name="robot_description" textfile="$(find gofa_description)/urdf/gofa_marc.urdf" />
 		<param name="ip_robot" 	 value="$(arg ip)" />
     	<param name="name_robot" value="ROB_1" />
     	<param name="task_robot" value="T_ROB1" />
@@ -25,7 +30,12 @@
     	<param name="port_robot" value="443" />
   		<param name="robot_port_number" value="6511" />
   		<param name="root_name" value="base" />
-  		<param name="tip_name" value="tool0" />
+  		<param name="tip_name" value="tool1" />
+
+  		<param name="camerasettings" value="/home/nuk1/Zivid/gofa_settings.yml" />
+
+  		<!-- <rosparam file="$(find calibration)/config/d415_R_gofa_calib1.yaml" command="load" /> -->
+  		<rosparam file="$(find calibration)/config/zivid_gofa_calib1.yaml" command="load" />
 
 	    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
@@ -33,11 +43,12 @@
   		<node pkg="abb_driver" name="controller_bridge" type="controller_bridge_node" output="screen"/>
   		<node pkg="abb_controllers" name="OneTaskInvKin" type="OneTaskInvKin_node" output="screen"/>
 
-  		<!-- <node pkg="softhand_industry" type="SH_industry_node" name="SH_industry_node" output="screen" /> -->
+
+		<node pkg="rpwc_bridge" name="zivid_bridge" type="zivid_bridge_node" output="screen"/>
 
 		<!-- RPWC-ABB BRIDGE -->
     	<node pkg="rpwc_bridge" name="abb_bridge" type="abb_bridge_node" output="screen"/>
-    	<!-- <node pkg="rpwc_bridge" name="abb_bridge" type="test_abb_bridge_node" output="screen"/> -->
+
     	<node pkg="rpwc_bridge" name="softhand_industry_bridge" type="softhand_industry_bridge_node" output="screen"/>
 
 	</group>
