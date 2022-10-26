@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot name="single_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Arguments -->
+
+  <xacro:property name="gripper_model"    value="$(arg gripper_model)"/>
+
+  <!-- <link name="world" /> -->
+
+  <!-- GOFA -->
+  <xacro:include  filename="$(find demo_launch)/urdf/gofa.urdf.xacro"/>
+  <xacro:gofa     xyz='0 0 0' rpy='0 0 0' arm_id="gofa"/>
+  <xacro:property name="robot_root" value="base"/>
+  <xacro:property name="robot_tip"  value="tool0"/>
+
+  <!-- GRIPPPERS -->
+  <xacro:if value="${gripper_model == '2fg7'}">         <!-- 2FG7 -->
+    <xacro:include filename="$(find gazebo_simulator)/grippers/onrobot_2fg7_description/urdf/onrobot_2fg7.xacro"/>
+    <xacro:property name="xyz" value="0 0 0"/>
+    <xacro:property name="rpy" value="${pi} 0 0"/>
+    <xacro:onrobot_2fg7 xyz="${xyz}" rpy="${rpy}" connected_to="${robot_tip}" safety_distance="0.03" gripper_id="${gripper_model}"/>
+  </xacro:if>
+
+  <xacro:if value="${gripper_model == '2fg7_custom'}">  <!-- 2FG7 DAMPED -->
+    <xacro:include filename="$(find gazebo_simulator)/grippers/onrobot_2fg7_custom_description/urdf/onrobot_2fg7_custom.xacro"/>
+    <xacro:property name="xyz" value="0 0 0"/>
+    <xacro:property name="rpy" value="${pi} 0 0"/>
+    <xacro:onrobot_2fg7_custom xyz="${xyz}" rpy="${rpy}" connected_to="${robot_tip}" safety_distance="0.03" gripper_id="${gripper_model}"/>
+  </xacro:if>
+
+  <xacro:if value="${gripper_model == 'pusher'}">       <!-- SINGLE BUTTON PUSHER -->
+    <xacro:include filename="$(find gazebo_simulator)/grippers/joiintlab_pusher_description/urdf/joiintlab_pusher.xacro"/>
+    <xacro:property name="xyz" value="0 0 0"/>
+    <xacro:property name="rpy" value="0 0 0"/>
+    <xacro:joiintlab_pusher xyz="${xyz}" rpy="${rpy}" connected_to="${robot_tip}" gripper_id="${gripper_model}"/>
+  </xacro:if>
+
+</robot>

@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+
+<launch>
+
+	<!-- ARGS -->
+	<arg name="ns_setup" default="setup1"/>
+	<arg name="ip" default="192.168.131.200" doc="abb robot IP address"/>
+	<arg name="ip_gripper" default="192.168.125.101" doc="onrobot device IP address"/>
+
+    <arg name="gripper_model"   default="none" />    <!-- "none" / "2fg7" / "2fg7_custom" / "pusher" -->
+    <arg name="camera_model"    default="zivid" />     		<!-- "zivid" or "realsense" -->
+    <arg name="digital_twin"    default="true" />
+
+	<!-- CAMERA NODES -->
+	<group if="$(eval camera_model == 'realsense')">			  
+			<include file="$(find realsense2_camera)/launch/rs_rgbd.launch" />
+            <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+            <node pkg="nodelet" type="nodelet" name="nodelet1" args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager" />
+	</group>
+	<!-- <group if="$(eval camera_model == 'zivid')">
+		<node name="zivid_camera" pkg="zivid_camera" type="zivid_camera_node" ns="zivid_camera" output="screen"/>
+	</group> -->
+
+	<group ns="$(arg ns_setup)">
+
+		<!-- ROBOT PARAMS -->
+		<param name="robot_description" command="$(find xacro)/xacro '$(find demo_launch)/urdf/gofa_gripper.urdf.xacro'
+        gripper_model:=$(arg gripper_model)" />
+		<param name="ip_robot" 	 value="$(arg ip)" />
+    	<param name="name_robot" value="ROB_1" />
+    	<param name="task_robot" value="T_ROB1" />
+    	<param name="pos_corr_gain" value="1" />
+    	<param name="max_speed_deviation" value="300" />
+    	<param name="port_robot" value="443" />
+  		<param name="robot_port_number" value="6511" />
+  		<param name="root_name" value="base" />
+		<group if="$(eval gripper_model == 'none')">
+  			<param name="tip_name" value="tool0" />
+		</group>
+		<group unless="$(eval gripper_model == 'none')">
+  			<param name="tip_name" value="tool1" />
+		</group>
+		<!-- GRIPPER PARAMS -->
+  		<param name="ip" value="$(arg ip_gripper)"/>
+		<param name="model" value="twofg"/>
+		<param name="gripper_closure_topic" value="not_used"/>
+		<!-- CAMERA PARAMS -->
+		<group if="$(eval camera_model == 'realsense')">
+			<param name="imagesettings" value="N/A" />
+			<param name="cloudsettings" value="N/A" />		
+  			<rosparam file="$(find calibration)/config/d415_R_gofa_calib1.yaml" command="load" />
+
+			<node pkg="rpwc_bridge" name="realsense_bridge" type="realsense_bridge_node" output="screen"/>
+		</group>
+		<group if="$(eval camera_model == 'zivid')">
+			<!-- <param name="imagesettings" value="/home/marc/Zivid/only_2d_settings.yml" />
+			<param name="cloudsettings" value="/home/marc/Zivid/gofa_settings.yml" /> -->
+			<param name="imagesettings" value="/home/robot/Zivid/only_2d_settings.yml" />
+			<param name="cloudsettings" value="/home/robot/Zivid/gofa_settings.yml" />
+			<rosparam file="$(find calibration)/config/zivid_gofa_calib1.yaml" command="load" />
+
+			<node pkg="rpwc_bridge" name="zivid_bridge" type="zivid_bridge_node" output="screen"/>
+		</group>
+
+
+		<!-- ROBOT STATE PUIBLISHER -->
+	    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+		<!-- ROBOT NODES -->
+	    <node pkg="abb_driver" name="abb_interface" type="abb_interface_node" output="screen"/>
+  		<node pkg="abb_driver" name="controller_bridge" type="controller_bridge_node" output="screen"/>
+  		<node pkg="abb_controllers" name="OneTaskInvKin" type="OneTaskInvKin_node" output="screen"/>
+		<!-- GRIPPER NODES -->
+		<group if="$(eval gripper_model == '2fg7')">
+		  	<param name="gripoffset"    value="0.035" />   <!-- DISTANCE BETWEEN FINGERS WHEN GRIPPER FULLY CLOSED (IN m) -->
+  			<node pkg="onrobot_driver" name="onrobot_interface" type="onrobot_interface.py" output="screen"/>
+			<node pkg="rpwc_bridge" name="onrobot_twofg_bridge" type="onrobot_twofg_bridge_node" output="screen"/>
+		</group>
+		<group if="$(eval gripper_model == '2fg7_custom')">
+		  	<param name="gripoffset"    value="0.010" />   <!-- DISTANCE BETWEEN FINGERS WHEN GRIPPER FULLY CLOSED (IN m) -->
+  			<node pkg="onrobot_driver" name="onrobot_interface" type="onrobot_interface.py" output="screen"/>
+			<node pkg="rpwc_bridge" name="onrobot_twofg_bridge" type="onrobot_twofg_bridge_node" output="screen"/>
+			<!-- <node pkg="onrobot_driver" name="onrobot_driver_node" type="onrobot_driver_node" output="screen"/> -->
+		</group>
+
+		<!-- RPWC BRIDGE -->
+    	<node pkg="rpwc_bridge" name="abb_bridge" type="abb_bridge_node" output="screen"/>
+
+        <!-- STATIC TF -->
+        <node pkg="calibration" type="static_tf" name="static_tf" />
+
+	</group>
+
+    <!-- SIMULATED ROBOT / DIGITAL TWIN (IF APPLIES) -->
+	<group if="$(arg digital_twin)">
+		<include file="$(find gazebo_simulator)/launch/giovenzana_gazebo_robot.launch">
+			<arg name="robot_model"     value="gofa"/>
+			<arg name="nspace"          value="$(arg ns_setup)/"/>
+			<arg name="gripper_model"   value="$(arg gripper_model)"/>
+			<arg name="digital_twin"    value="true"/>
+			<arg name="simulation"      value="false"/>
+		</include>
+	</group>
+
+	<!-- RVIZ -->
+	<node pkg="tf" type="static_transform_publisher" name="L0_transform_publisher"  args="0 0 0 0 0 0 base digital_twin/gofa_L0 100" />
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find demo_launch)/config/abb_gofa.rviz" />
+
+</launch>
