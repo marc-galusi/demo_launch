@@ -53,10 +53,8 @@
 			<node pkg="rpwc_bridge" name="realsense_bridge" type="realsense_bridge_node" output="screen"/>
 		</group>
 		<group if="$(eval camera_model == 'zivid')">
-			<!-- <param name="imagesettings" value="/home/marc/Zivid/only_2d_settings.yml" />
-			<param name="cloudsettings" value="/home/marc/Zivid/gofa_settings.yml" /> -->
-			<param name="imagesettings" value="/home/robot/Zivid/only_2d_settings.yml" />
-			<param name="cloudsettings" value="/home/robot/Zivid/gofa_settings.yml" />
+			<param name="imagesettings" value="only_2d_settings.yml" />
+			<param name="cloudsettings" value="gofa_settings.yml" />
 			<rosparam file="$(find calibration)/config/zivid_gofa_calib1.yaml" command="load" />
 
 			<node pkg="rpwc_bridge" name="zivid_bridge" type="zivid_bridge_node" output="screen"/>
